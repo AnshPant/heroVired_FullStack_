@@ -34,7 +34,7 @@ const LeftDash = ({ fetchedData, handleProgramClick ,woops  }) => {
   }, [fetchedData]);
   
   const third= () =>{
-    window.location.reload();
+    // window.location.reload();
     woops('true');
   }
 

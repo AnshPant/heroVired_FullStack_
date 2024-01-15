@@ -1,22 +1,18 @@
 import { useNavigate  } from "react-router-dom";
-import { useState } from "react";
-import React, { useEffect } from 'react';
+import { useAuth } from '../Context/AuthContext';
+import React, { useState } from 'react';
 
 const LoginForm = () => {
+
+  
     
   const [mailid, setMail] = useState("");
+  const { login } = useAuth();
   const [password, setPassword] = useState("");
-  const [secret, setSecret] = useState('');
-  const [showQRCode, setShowQRCode] = useState(false);
   const navigate = useNavigate();
   const [otpInput, setOtpInput] = useState('');
   const [cotp, setCotp] = useState('');
-  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  
- 
-
   const handleLogin2 = async e => {
     e.preventDefault();  
     try {
@@ -37,45 +33,30 @@ const LoginForm = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ mailid }),
         });
-        
-       
         if (otpResponse.ok) {
             const data2 = await otpResponse.json();
             const otapa = data2.otp ;
             const sotapa = otapa.toString();
-            
             setCotp(sotapa);
-             
-         
           setIsModalOpen(true);
-        
-        
+          login();
         } else {
           console.error('Error initiating two-factor authentication:', await otpResponse.json());
-        }
-
-         
+        } 
         } else {
           console.error(data.message);  
-        }
-
-      
-  
+        } 
     } catch (err) {
       console.error(err.message);
     }
+    login();
   };
-
   function handleOTP() {
     if(cotp == otpInput){
-        
         navigate("/dashboard");
     }
     else alert("Check OTP and enter again.")
   }
-  
-  
-  
   return (
     <div className="bg-white shadow-lg rounded px-8 pt-6 pb-8 mb-4 w-1/3 h-1/3 flex flex-col">
       
@@ -85,19 +66,19 @@ const LoginForm = () => {
           type="text"
           value={mailid}
           onChange={(e) => setMail(e.target.value)}
-          class="w-full h-9/2 bg-white border-b-2 mb-5 text-black focus:outline-none"
+          className="w-full h-9/2 bg-white border-b-2 mb-5 text-black focus:outline-none"
           placeholder="Email"
         ></input>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          class="w-full h-9/4 bg-white border-b-2 mb-5 text-black focus:outline-none"
+          className="w-full h-9/4 bg-white border-b-2 mb-5 text-black focus:outline-none"
           placeholder="Password"
         ></input>
        
         <button
-          class="bg-blue-500 text-white rounded w-full"
+          className="bg-blue-500 text-white rounded w-full"
           onClick={handleLogin2}
         >
           Login
@@ -122,18 +103,16 @@ const LoginForm = () => {
           type="text"
           value={otpInput}
           onChange={(e) => setOtpInput(e.target.value)}
-          class="w-full h-9/2 bg-white border-b-2 mb-5 text-black focus:outline-none"
+          className="w-full h-9/2 bg-white border-b-2 mb-5 text-black focus:outline-none"
           placeholder="OTP"
         ></input>
         
        
         <button
-          class="bg-blue-500 text-white rounded w-full"
-          onClick={handleOTP}
-        >
+          className="bg-blue-500 text-white rounded w-full"
+          onClick={handleOTP}>
           Submit
         </button>
-         
       </div>
       </div>): null}
     </div>

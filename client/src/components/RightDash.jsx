@@ -1,7 +1,7 @@
 
 import React, { useState , useEffect } from 'react';
 
-const RightDash = ({selectedProgram ,addd}) => {
+const RightDash = ({selectedProgram ,addd , a}) => {
   
     const [price, setPrice] = useState(240000);
     const [domain, setDomain] = useState('Data');
@@ -90,10 +90,11 @@ const handleChange = (cat, value) => {
   };
       
   useEffect(() => {
+    setDate(formattedDate);
     if(addd){
        
         resetValues();
-        enableEdit();
+        
         setDate(formattedDate);
     }
     else {
@@ -102,7 +103,7 @@ const handleChange = (cat, value) => {
     return () => {
     
     };
-  }, [addd]);
+  }, [addd,date]);
   
 
   useEffect(() => {
@@ -141,6 +142,9 @@ const handleChange = (cat, value) => {
     setImage('');
     setDescription('');
     setDate('');
+
+    enableEdit();
+    a();
   };
 
   
@@ -171,7 +175,7 @@ const handleChange = (cat, value) => {
       .then((response) => response.json())
       .then((result) => {
       
-        window.location.reload()
+        resetValues();
       })
       .catch((error) => {
         console.error('Error deleting data:', error);
@@ -180,7 +184,7 @@ const handleChange = (cat, value) => {
       
   }
   const enableEdit = () => {
-    setIsEditable(!isEditable);
+    setIsEditable(true);
 
    
   };
@@ -212,13 +216,12 @@ const handleChange = (cat, value) => {
    
   
   const handleSave = () => {
+   
     const formattedDate2 = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
     setDate(formattedDate2);
     
     
-    if(isAnyFieldEmpty){
-      alert("All fields are required.");
-    }
+     
    
    
     const data = {
@@ -252,7 +255,7 @@ const handleChange = (cat, value) => {
       .then(response => response.json())
       .then(result => {
       
-        setReloaded(true);
+        resetValues();
        
       })
       .catch(error => {
@@ -260,9 +263,7 @@ const handleChange = (cat, value) => {
         
       });
     
-      if(reloaded){
-        window.location.reload()
-      }
+      
   };
 
   const handleUpdate = () => {
@@ -271,10 +272,6 @@ const handleChange = (cat, value) => {
     setDate(formattedDate2);
     
     
-    if(!isAnyFieldEmpty){
-      alert("All fields are required.");
-       return; 
-    }
    
    
     const data = {
@@ -308,8 +305,8 @@ const handleChange = (cat, value) => {
     })
       .then(response => response.json())
       .then(result => {
-       
-        window.location.reload()
+       resetValues();
+        // window.location.reload()
         
       })
       .catch(error => {

@@ -2,16 +2,20 @@ import RightDash from "../components/RightDash";
 import LeftDash from "../components/LeftDash";
 import Header from "../components/Header";
 import React, { useState, useEffect } from 'react';
-
+import { useAuth } from '../Context/AuthContext';
+import { useNavigate  } from "react-router-dom";
 
 const DashBoard = () => {
-
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+ 
   const [fetchedData, setFetchedData] = useState([]);
   const [selectedProgram, setSelectedProgram] = useState(null);
 
   const [woopy , setWoopy] = useState(false);
   const woops = (val) =>{
     setWoopy(val);
+    setSelectedProgram(null);
     
   }
   useEffect(() => {
@@ -28,7 +32,13 @@ const DashBoard = () => {
 
     
     fetchData();
-  }, []);
+    if (!isAuthenticated) {
+      // navigate("/");
+      
+    }
+  }, [isAuthenticated,navigate,fetchedData]);
+
+  
 
   const handleProgramClick = (program) => {
     setSelectedProgram(program);
@@ -55,7 +65,7 @@ const DashBoard = () => {
         <div className="w-3/4">
           Guys
         
-          <RightDash selectedProgram={selectedProgram} addd = {woopy} />
+          <RightDash selectedProgram={selectedProgram} addd = {woopy}  a={woops}/>
         </div>
       </div>
     </div>
