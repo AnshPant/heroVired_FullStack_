@@ -1,41 +1,47 @@
+//laoding environment variables
+require('dotenv').config();
+
+//import modules
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const pool = require("../db");
+const pool = require("./db");
 const speakeasy = require('speakeasy');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-
-//middleware
+ 
+//enable cross origin resource sharing
 app.use(cors());
-app.use(express.json()); //req.body
-// app.use(bodyParser.json());
-//ROUTES//
 
-//create a todo
+//parse json object in request body
+app.use(express.json()); 
+ 
+
+ // Create a nodemailer transporter for sending emails
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465 ,
   secure: true,
   auth: {
-    // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-    user: "hellh339@gmail.com",
-    pass: "ngjuzesbxkezbdmx",
+      // Retrieve email user and password from environment variables
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
-  // Your email configuration here (service, auth, etc.)
+ 
 });
 
+// Handle POST request to send OTP
 app.post('/send-otp', (req, res) => {
   const { mailid } = req.body;
-  console.log(mailid);
-  // Generate a one-time code (TOTP)
+ 
+  
   const oneTimeCode = speakeasy.totp({
     secret: speakeasy.generateSecret({ length: 20 }).base32,
     encoding: 'base32',
   });
-  console.log("otp is: ",oneTimeCode);
+  
 
-  // Send the one-time code to the user's email
+    // Compose email with OTP
   const mailOptions = {
     from: 'hellh339@gmail.com',
     to: mailid,
@@ -53,7 +59,7 @@ app.post('/send-otp', (req, res) => {
   });
 });
 
-
+// Handle POST request to create new data in the database
 app.post("/createData", async (req, res) => {
   try {
  
@@ -75,7 +81,7 @@ app.post("/createData", async (req, res) => {
       Date,
     } = req.body;
 
-     console.log(req.body)
+   
   
 
     const newTodo = await pool.query(
@@ -104,8 +110,8 @@ app.post("/createData", async (req, res) => {
 
 
 
-//get all todos
-
+ 
+// Handle GET request to retrieve all data from the database
 app.get("/getData", async (req, res) => {
   try {
     const allTodos = await pool.query("SELECT * FROM programs");
@@ -115,8 +121,8 @@ app.get("/getData", async (req, res) => {
   }
 });
 
-//get a todo
-
+ 
+// Handle GET request to retrieve  data from the database by ID
 app.get("/getData/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -130,8 +136,8 @@ app.get("/getData/:id", async (req, res) => {
   }
 });
 
-//update a todo
-
+ 
+// Handle update request to update all data from the database using id
 app.put("/updateData/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -152,7 +158,7 @@ app.put("/updateData/:id", async (req, res) => {
       EligibilityCriteria,
       Date,
     } = req.body;
-    console.log(req.body);
+   
     const updateTodo = await pool.query(
       "UPDATE programs SET Name = $1, Price = $2, Domain = $3, ProgramType = $4, Registrations = $5, Description = $6, PlacementAssurance = $7,      ImageUrl = $8,      UniversityName = $9,      FacultyProfileUrl = $10,      LearningHours = $11, CertificateDiploma = $12, EligibilityCriteria = $13 , Date = $14 WHERE id = $15 returning *", 
       [ Name,
@@ -179,8 +185,8 @@ app.put("/updateData/:id", async (req, res) => {
   }
 });
 
-//delete a todo
-
+ 
+// Handle delete request to update all data from the database using id
 app.delete("/deleteData/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -195,9 +201,8 @@ app.delete("/deleteData/:id", async (req, res) => {
 
 
 
-
-//createCredentials
-
+ 
+// Handle register request to create account for usage
 app.post("/register", async (req, res) => {
   try {
  
@@ -207,9 +212,11 @@ app.post("/register", async (req, res) => {
       password
     } = req.body;
 
+
+    //creating hashed password
     const hashedPassword = await bcrypt.hash(password, 10);
     const secret = speakeasy.generateSecret({ length: 20 });
-    // console.log(name,mail,password)
+   //inserting the data in the users2 table
     const credential = await pool.query(
       "INSERT INTO users2 (name,  mailid,  password , secret) VALUES(  $1 ,$2 ,$3,$4 ) RETURNING *",
       [ name , mailid , hashedPassword, secret]
@@ -221,6 +228,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
+//handling login requests
 app.post("/login", async (req, res) => {
   try {
  
@@ -229,7 +237,7 @@ app.post("/login", async (req, res) => {
       password
     } = req.body;
   
-    // console.log(name,mail,password)
+  //query to handle the login request
     const queryResult  = await pool.query(
       "SELECT * FROM users WHERE mailid = $1 and password = $2",
       [   mailid , password]
@@ -241,7 +249,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-//2fa login
+//2fa login - two factor authentication login 
 
 app.post("/login2", async (req, res) => {
   try {
@@ -252,7 +260,7 @@ app.post("/login2", async (req, res) => {
       
     } = req.body;
   
-    // console.log(name,mail,password)
+     
     const user  = await pool.query(
       "SELECT * FROM users2 WHERE mailid = $1 ",
       [mailid ]
@@ -260,11 +268,11 @@ app.post("/login2", async (req, res) => {
     if(!user){
       return res.status(401).json({ message: 'Invalid credentials' });
     }
-    // res.json(users.rows[0]);
+    
 
-    console.log(password, user.rows[0].password);
+     
     const passwordMatch = await bcrypt.compare(password, user.rows[0].password);
-    console.log(passwordMatch)
+     
   if (!passwordMatch) {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
@@ -276,6 +284,8 @@ app.post("/login2", async (req, res) => {
   }
 });
 
+
+
 app.listen(5000, () => {
-  console.log("server has started on port 5000");
+  
 });
