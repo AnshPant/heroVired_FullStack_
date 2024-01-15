@@ -14,13 +14,11 @@ const LoginForm = () => {
   const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    console.log('Updated cotp:', cotp);
-  }, [cotp]);
+  
  
 
   const handleLogin2 = async e => {
-    e.preventDefault(); // dont want the thing to refresh
+    e.preventDefault();  
     try {
         const body = { mailid, password };
   
@@ -29,18 +27,18 @@ const LoginForm = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
-        console.log("response is: ",response.ok);
+       
         const data = await response.json();
         
         if (response.ok) {
-          console.log('Login successful iniitiating mail otp');
+         
           const otpResponse = await fetch('http://localhost:5000/send-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ mailid }),
         });
         
-        console.log(otpResponse);
+       
         if (otpResponse.ok) {
             const data2 = await otpResponse.json();
             const otapa = data2.otp ;
@@ -48,7 +46,7 @@ const LoginForm = () => {
             
             setCotp(sotapa);
              
-          console.log('Two-factor authentication initiated. Enter the OTP received in your email.');
+         
           setIsModalOpen(true);
         
         
@@ -58,7 +56,7 @@ const LoginForm = () => {
 
          
         } else {
-          console.error(data.message); // Handle authentication error
+          console.error(data.message);  
         }
 
       

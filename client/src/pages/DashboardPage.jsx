@@ -9,8 +9,13 @@ const DashBoard = () => {
   const [fetchedData, setFetchedData] = useState([]);
   const [selectedProgram, setSelectedProgram] = useState(null);
 
+  const [woopy , setWoopy] = useState(false);
+  const woops = (val) =>{
+    setWoopy(val);
+    
+  }
   useEffect(() => {
-    // Fetch data from the "getData" API endpoint
+   
     const fetchData = async () => {
       try {
         const response = await fetch('http://localhost:5000/getData');
@@ -21,13 +26,14 @@ const DashBoard = () => {
       }
     };
 
-    // Call the fetchData function
+    
     fetchData();
   }, []);
 
   const handleProgramClick = (program) => {
     setSelectedProgram(program);
-    console.log(program);
+    setWoopy(false);
+    
   };
 
 
@@ -39,16 +45,17 @@ const DashBoard = () => {
       <div className="flex w-full h-full">
         <div className=" w-1/4 border-r-slate-200 border-r-2">
           Hello
-          {/* <LeftDash /> */}
+       
           <LeftDash
             fetchedData={fetchedData}
+            woops = {woops}
             handleProgramClick={handleProgramClick}
           />
         </div>
         <div className="w-3/4">
           Guys
-          {/* <RightDash /> */}
-          <RightDash selectedProgram={selectedProgram} />
+        
+          <RightDash selectedProgram={selectedProgram} addd = {woopy} />
         </div>
       </div>
     </div>

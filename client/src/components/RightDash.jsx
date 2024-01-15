@@ -1,8 +1,8 @@
 
 import React, { useState , useEffect } from 'react';
 
-const RightDash = ({selectedProgram}) => {
-
+const RightDash = ({selectedProgram ,addd}) => {
+  
     const [price, setPrice] = useState(240000);
     const [domain, setDomain] = useState('Data');
     const [ assurance, setAssurance] = useState(true);
@@ -18,31 +18,33 @@ const RightDash = ({selectedProgram}) => {
     const [ description , setDescription] = useState('');
     const [date , setDate] = useState('');
     const [isEditable, setIsEditable] = useState(true);
-    // console.log("from right dash",selectedProgram);
+    
     const [entry , setEntry] = useState([]);
+    const [reloaded , setReloaded] = useState(false);
 
     const currentDate = new Date();
 
-// Get individual components of the date
+
     const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1; // Month is zero-based
+    const month = currentDate.getMonth() + 1; 
     const day = currentDate.getDate();
 
-// Format the date as a string (e.g., "YYYY-MM-DD")
+
 const formattedDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
 
+    
 
     const handlePriceChange = (e) => {
         
         setPrice(e.target.value);
-        // console.log(price);
+      
       };
-// State for the selected option
+ 
 const [selectedOption, setSelectedOption] = useState('');
 
-// Function to handle changes in the dropdown
+ 
 const handleChange = (cat, value) => {
-    console.log("hanbdleChange Called")
+  
     if (cat === 'price') {
       setPrice(value);
     }
@@ -87,12 +89,26 @@ const handleChange = (cat, value) => {
      
   };
       
+  useEffect(() => {
+    if(addd){
+       
+        resetValues();
+        enableEdit();
+        setDate(formattedDate);
+    }
+    else {
+      
+    }
+    return () => {
+    
+    };
+  }, [addd]);
   
 
   useEffect(() => {
     if (selectedProgram) {
-       
-      setPrice(selectedProgram.price || 240000);
+      setIsEditable(false);
+      setPrice(parseInt(selectedProgram.price, 10) || 240000);
       setDomain(selectedProgram.domain || 'Data');
       setAssurance(selectedProgram.placementassurance || true);
       setName(selectedProgram.name || '');
@@ -110,7 +126,7 @@ const handleChange = (cat, value) => {
   }, [selectedProgram]);
 
   const resetValues = () => {
-     
+         
     setPrice(240000);
     setDomain('Data');
     setAssurance(true);
@@ -129,6 +145,7 @@ const handleChange = (cat, value) => {
 
   
   const isAnyFieldEmpty = () => {
+  
     return (
       price === '' ||
       domain === '' ||
@@ -144,7 +161,30 @@ const handleChange = (cat, value) => {
       description === ''
     );
   };
+ 
   
+  const pleaseDelete =() =>{
+    const dele = selectedProgram.id;
+    fetch(`http://localhost:5000/deleteData/${dele}`, {
+      method: 'DELETE',
+    })
+      .then((response) => response.json())
+      .then((result) => {
+      
+        window.location.reload()
+      })
+      .catch((error) => {
+        console.error('Error deleting data:', error);
+       
+      });
+      
+  }
+  const enableEdit = () => {
+    setIsEditable(!isEditable);
+
+   
+  };
+
   const saveDraft = () => {
     const check = isAnyFieldEmpty();
     
@@ -165,15 +205,22 @@ const handleChange = (cat, value) => {
     
     };
   alert("Details saved in local storage");
-    // Save the draft data to local storage or your preferred storage mechanism
+    
     localStorage.setItem('draftData', JSON.stringify(draftData));
   };
 
-  //posting data
+   
   
   const handleSave = () => {
-    setDate(formattedDate);
-    console.log(date);
+    const formattedDate2 = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+    setDate(formattedDate2);
+    
+    
+    if(isAnyFieldEmpty){
+      alert("All fields are required.");
+    }
+   
+   
     const data = {
       "Name":name,
       "Price":price,
@@ -192,26 +239,85 @@ const handleChange = (cat, value) => {
       "EligibilityCriteria":eligibility,
       "Date": date,
     };
-    console.log(data);
-    // Post data to your API endpoint
-    
+   
+     
     fetch('http://localhost:5000/createData', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Add any other headers if needed
+        
       },
       body: JSON.stringify(data),
     })
       .then(response => response.json())
       .then(result => {
-        console.log('Data successfully posted:', result);
-        // Handle the result or perform any additional actions
+      
+        setReloaded(true);
+       
       })
       .catch(error => {
         console.error('Error posting data:', error);
-        // Handle the error
+        
       });
+    
+      if(reloaded){
+        window.location.reload()
+      }
+  };
+
+  const handleUpdate = () => {
+    const dele = selectedProgram.id;
+    const formattedDate2 = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+    setDate(formattedDate2);
+    
+    
+    if(!isAnyFieldEmpty){
+      alert("All fields are required.");
+       return; 
+    }
+   
+   
+    const data = {
+      "Name":name,
+      "Price":price,
+      "Domain":domain,
+      "ProgramType":type,
+      "Registrations":reg,
+      "Description":description,
+      
+      "PlacementAssurance":assurance,
+      "ImageUrl":image,
+      "UniversityName":university,
+      "FacultyProfileUrl":faculty,
+     
+      "LearningHours":hours,
+      "CertificateDiploma":certificate,
+      "EligibilityCriteria":eligibility,
+      "Date": date,
+    };
+   
+   
+     
+    fetch(`http://localhost:5000/updateData/${dele}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.json())
+      .then(result => {
+       
+        window.location.reload()
+        
+      })
+      .catch(error => {
+        console.error('Error posting data:', error);
+        
+      });
+    
+     
   };
 
     return (
@@ -227,7 +333,7 @@ const handleChange = (cat, value) => {
             <label className="text-black font-bold">
               <span className="text-red-500">*</span>Price
             </label>
-            <select className="bg-white w-full m-2 p-2 border-2 border-gray-200 rounded" value={price} onChange={handlePriceChange}  >
+            <select className="bg-white w-full m-2 p-2 border-2 border-gray-200 rounded" value={price} onChange={handlePriceChange} disabled={!isEditable} >
               <option value="240,000">INR 240,000</option>
               <option value="480,000">INR 480,000</option>
               <option value="720,000">INR 720,000</option>
@@ -238,7 +344,7 @@ const handleChange = (cat, value) => {
             <label className="text-black font-bold">
               <span className="text-red-500">*</span>Domain
             </label>
-            <select className="bg-white w-full m-2 p-2 border-2 border-gray-200 rounded"  value={domain} onChange={(e) => handleChange('domain', e.target.value)} >
+            <select className="bg-white w-full m-2 p-2 border-2 border-gray-200 rounded"  value={domain} onChange={(e) => handleChange('domain', e.target.value)} disabled={!isEditable}>
               <option value="Data">Data</option>
               <option value="UI">UI</option>
               <option value="Database">Database</option>
@@ -254,9 +360,9 @@ const handleChange = (cat, value) => {
               id="Placement Assurance"
               className="bg-white"
               checked={assurance}
-          onChange={() => setAssurance((prevAssurance) => !prevAssurance)}
-      
-            ></input>
+          onChange={() => setAssurance((prevAssurance) => !prevAssurance)
+          }
+          disabled={!isEditable}  ></input>
             <label htmlFor="Placement Assurance" className="m-1">
               Placement Assurance
             </label>
@@ -277,6 +383,7 @@ const handleChange = (cat, value) => {
               placeholder="Accelerated Program in Data Analytics"
               value={name}
               onChange={(e) => handleChange('name', e.target.value)}
+              disabled={!isEditable}
             />
           </div>
           <div className="flex flex-col items-start w-1/4 justify-center m-2">
@@ -292,6 +399,7 @@ const handleChange = (cat, value) => {
                 className="w-5"
                 checked={type === 'FT'}
             onChange={() => setType('FT')}
+            disabled={!isEditable}
               ></input>
               <label htmlFor="FT" className="ml-2">
                 FT
@@ -304,6 +412,7 @@ const handleChange = (cat, value) => {
                 className="ml-10 w-5"
                 checked={type === 'PT'}
             onChange={() => setType('PT')}
+            disabled={!isEditable}
               ></input>
               <label htmlFor="PT" className="ml-2">
                 PT
@@ -323,6 +432,7 @@ const handleChange = (cat, value) => {
                 className="w-5"
                 checked={reg === 'Yes'}
             onChange={() => setRegister('Yes')}
+            disabled={!isEditable}
               ></input>
               <label htmlFor="Yes" className="ml-2">
                 Yes
@@ -335,6 +445,7 @@ const handleChange = (cat, value) => {
                 className="ml-10 w-5"
                 checked={reg === 'No'}
             onChange={() => setRegister('No')}
+            disabled={!isEditable}
               ></input>
               <label htmlFor="No" className="ml-2">
                 No
@@ -347,7 +458,7 @@ const handleChange = (cat, value) => {
             <label className="text-black font-bold">
               <span className="text-red-500">*</span>University Name/Partner
             </label>
-            <select className="bg-white w-full m-2 p-2 border-2 border-gray-200 rounded">
+            <select className="bg-white w-full m-2 p-2 border-2 border-gray-200 rounded" disabled={!isEditable}>
               <option value="LNMIIT">LNMIIT</option>
               <option value="IIT Delhi">IIT Delhi</option>
               <option value="NMIMS">NMIMS</option>
@@ -358,7 +469,7 @@ const handleChange = (cat, value) => {
             <label className="text-black font-bold">
               <span className="text-red-500">*</span>Certificate or Diploma
             </label>
-            <select className="bg-white w-full m-2 p-2 border-2 border-gray-200 rounded">
+            <select className="bg-white w-full m-2 p-2 border-2 border-gray-200 rounded" disabled={!isEditable}>
               <option value="BTech">BTech</option>
               <option value="MTech">MTech</option>
               <option value="PhD">PhD</option>
@@ -374,6 +485,7 @@ const handleChange = (cat, value) => {
               className="bg-white text-black focus:outline-none w-full border-2 p-2 rounded"
               value={faculty}
               onChange={(e) => handleChange('faculty', e.target.value)}
+              disabled={!isEditable}
             />
           </div>
         </div>
@@ -388,6 +500,7 @@ const handleChange = (cat, value) => {
               placeholder="9 Hours"
               value={hours}
               onChange={(e) => handleChange('hours', e.target.value)}
+              disabled={!isEditable}
             />
           </div>
           <div className="flex flex-col items-start w-1/4">
@@ -398,6 +511,7 @@ const handleChange = (cat, value) => {
               placeholder="Graduate"
               value={eligibility}
               onChange={(e) => handleChange('eligibility', e.target.value)}
+              disabled={!isEditable}
             />
           </div>
           <div className="flex flex-col items-start w-1/4">
@@ -409,6 +523,7 @@ const handleChange = (cat, value) => {
               className="bg-white text-black focus:outline-none w-full border-2 p-2 rounded"
               value={image}
               onChange={(e) => handleChange('image', e.target.value)}
+              disabled={!isEditable}
             />
           </div>
         </div>
@@ -424,24 +539,28 @@ const handleChange = (cat, value) => {
               placeholder="Program Information / header"
               value={description}
               onChange={(e) => handleChange('description', e.target.value)}
+              disabled={!isEditable}
             ></textarea>
           </div>
         </div>
         <div className="w-full border-b-2 text-white p-3">Hello</div>
         <div className="w-full flex justify-between">
           <div>
-            <button className="bg-white border-2 border-red-500 m-1 text-bold text-red-500 focus:outline-none hover:bg-red-500 hover:text-white hover:outline-none">
+            <button className="bg-white border-2 border-red-500 m-1 text-bold text-red-500 focus:outline-none hover:bg-red-500 hover:text-white hover:outline-none" onClick={pleaseDelete}>
               Delete
             </button>
             <button className="bg-white border-2 border-blue-500 m-1 text-bold text-blue-500 focus:outline-none hover:bg-red-500 hover:text-white hover:outline-none" onClick={resetValues}>
               Reset
+            </button>
+            <button className="bg-white border-2 border-blue-500 m-1 text-bold text-blue-500 focus:outline-none hover:bg-red-500 hover:text-white hover:outline-none" onClick={enableEdit}>
+              Edit
             </button>
           </div>
           <div className="flex">
             <button className="bg-white text-black text-bold border-2 border-gray-200 m-1 rounded"  onClick={saveDraft}>
               Save Draft
             </button>
-            <button className="bg-blue-700 text-white rounded m-1 hover:bg-blue-500 focus:outline-none" onClick={handleSave}>
+            <button className="bg-blue-700 text-white rounded m-1 hover:bg-blue-500 focus:outline-none" onClick={ selectedProgram?handleUpdate : handleSave}>
               Save Program
             </button>
           </div>

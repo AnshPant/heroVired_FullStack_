@@ -5,7 +5,7 @@ import Add from "../assets/Add.png";
 import Search from "../assets/Search.png";
 import ProgramList from "./ProgramList";
 
-const LeftDash = ({ fetchedData, handleProgramClick }) => {
+const LeftDash = ({ fetchedData, handleProgramClick ,woops  }) => {
   const [numberOfEntries, setNumberOfEntries] = useState(0);
 
   const updateNumberOfEntries = (count) => {
@@ -32,7 +32,12 @@ const LeftDash = ({ fetchedData, handleProgramClick }) => {
   useEffect(() => {
     updateNumberOfEntries(fetchedData.length);
   }, [fetchedData]);
-      
+  
+  const third= () =>{
+    window.location.reload();
+    woops('true');
+  }
+
   return (
     <div className="flex flex-col h-full">
       <div className="text-black flex flex-row items-center w-full justify-between">
@@ -40,13 +45,13 @@ const LeftDash = ({ fetchedData, handleProgramClick }) => {
           <h2 className="text-4xl font-extrabold">Programs</h2>
           <div className="font-bold">Total : {numberOfEntries}</div>
         </div>
-        <button className="h-14 w-14 rounded-full bg-blue-700 text-white mr-2 hover:bg-blue-500 focus:outline-none">
-          <img src={Add} alt="Add" />
+        <button className="h-14 w-14 rounded-full bg-blue-700 text-white mr-2 hover:bg-blue-500 focus:outline-none" onClick={third}>
+          <img src={Add} alt="Add"  />
         </button>
       </div>
       <div className="m-2 flex items-center justify-center">
         <button className="bg-gray-200 border-2 border-gray-200 rounded-none rounded-s-lg h-10 focus:outline-none">
-          <img src={Search} onClick={() => console.log(filterDataByName())}></img>
+          <img src={Search} ></img>
         </button>
         <input
           type="search"
@@ -55,7 +60,7 @@ const LeftDash = ({ fetchedData, handleProgramClick }) => {
           onChange={handleInputChange}
         ></input>
       </div>
-      {/* ... rest of your LeftDash code ... */}
+      
       
       <div className="h-full flex flex-col items-center justify-start">
         <ProgramList

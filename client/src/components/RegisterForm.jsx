@@ -8,13 +8,13 @@ const RegisterForm = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  //functions
+   
   const create = async e => {
-    e.preventDefault(); // dont want the thing to refresh
+    e.preventDefault();  
     try {
-      console.log("hello");
+       
       const body = { name , mailid, password };
-      console.log(body)
+      
       const response = await fetch("http://localhost:5000/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

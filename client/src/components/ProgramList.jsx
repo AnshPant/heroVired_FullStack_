@@ -11,7 +11,7 @@ const ProgramList = ({ fetchedData, handleProgramClick }) => {
           <Program
             key={program.id}
             program={program}
-            onClick={() => handleProgramClick(program)}
+            onClick={() => handleProgramClick(program )}
           />
         ))}
       </div>

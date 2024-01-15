@@ -147,13 +147,14 @@ app.put("/updateData/:id", async (req, res) => {
       UniversityName,
       FacultyProfileUrl,
       LearningHours,
-      Duration,
+       
       CertificateDiploma,
       EligibilityCriteria,
+      Date,
     } = req.body;
-
+    console.log(req.body);
     const updateTodo = await pool.query(
-      "UPDATE programs SET Name = $1, Price = $2, Domain = $3, ProgramType = $4, Registrations = $5, Description = $6, PlacementAssurance = $7,      ImageUrl = $8,      UniversityName = $9,      FacultyProfileUrl = $10,      LearningHours = $11,      Duration = $12,      CertificateDiploma = $13, EligibilityCriteria = $14 WHERE id = $15", 
+      "UPDATE programs SET Name = $1, Price = $2, Domain = $3, ProgramType = $4, Registrations = $5, Description = $6, PlacementAssurance = $7,      ImageUrl = $8,      UniversityName = $9,      FacultyProfileUrl = $10,      LearningHours = $11, CertificateDiploma = $12, EligibilityCriteria = $13 , Date = $14 WHERE id = $15 returning *", 
       [ Name,
         Price,
         Domain,
@@ -165,9 +166,10 @@ app.put("/updateData/:id", async (req, res) => {
         UniversityName,
         FacultyProfileUrl,
         LearningHours,
-        Duration,
+         
         CertificateDiploma,
         EligibilityCriteria,
+        Date,
         id]
     );
 
