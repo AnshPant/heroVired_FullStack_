@@ -22,7 +22,7 @@ const DashBoard = () => {
    
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/getData');
+        const response = await fetch('https://heroserver-zr04.onrender.com/getData');
         const data = await response.json();
         setFetchedData(data);
       } catch (error) {

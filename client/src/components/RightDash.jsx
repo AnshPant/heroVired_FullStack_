@@ -169,7 +169,7 @@ const handleChange = (cat, value) => {
   
   const pleaseDelete =() =>{
     const dele = selectedProgram.id;
-    fetch(`http://localhost:5000/deleteData/${dele}`, {
+    fetch(`https://heroserver-zr04.onrender.com/deleteData/${dele}`, {
       method: 'DELETE',
     })
       .then((response) => response.json())
@@ -244,7 +244,7 @@ const handleChange = (cat, value) => {
     };
    
      
-    fetch('http://localhost:5000/createData', {
+    fetch('https://heroserver-zr04.onrender.com/createData', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -295,7 +295,7 @@ const handleChange = (cat, value) => {
    
    
      
-    fetch(`http://localhost:5000/updateData/${dele}`, {
+    fetch(`https://heroserver-zr04.onrender.com/updateData/${dele}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

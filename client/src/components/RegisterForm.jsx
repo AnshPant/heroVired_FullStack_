@@ -15,7 +15,7 @@ const RegisterForm = () => {
        
       const body = { name , mailid, password };
       
-      const response = await fetch("http://localhost:5000/register", {
+      const response = await fetch("https://heroserver-zr04.onrender.com/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)

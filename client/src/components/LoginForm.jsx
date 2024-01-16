@@ -18,7 +18,7 @@ const LoginForm = () => {
     try {
         const body = { mailid, password };
   
-        const response = await fetch('http://localhost:5000/login2', {
+        const response = await fetch('https://heroserver-zr04.onrender.com/login2', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
@@ -28,7 +28,7 @@ const LoginForm = () => {
         
         if (response.ok) {
          
-          const otpResponse = await fetch('http://localhost:5000/send-otp', {
+          const otpResponse = await fetch('https://heroserver-zr04.onrender.com//send-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ mailid }),
