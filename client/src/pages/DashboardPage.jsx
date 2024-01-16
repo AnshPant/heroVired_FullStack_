@@ -33,7 +33,7 @@ const DashBoard = () => {
     
     fetchData();
     if (!isAuthenticated) {
-      // navigate("/");
+      navigate("/");
       
     }
   }, [isAuthenticated,navigate,fetchedData]);

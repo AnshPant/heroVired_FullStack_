@@ -9,7 +9,9 @@ const pool = require("./db");
 const speakeasy = require('speakeasy');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
- 
+const path = require("path");
+__dirname = path.resolve();
+
 //enable cross origin resource sharing
 app.use(cors());
 
@@ -284,6 +286,12 @@ app.post("/login2", async (req, res) => {
   }
 });
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/client/build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+  });
+}
 
 
 app.listen(5000, () => {

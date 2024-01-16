@@ -1,32 +1,29 @@
 CREATE DATABASE mashle;
 
-CREATE TABLE todo(
-  todo_id SERIAL PRIMARY KEY,
-  description VARCHAR(255)
+ 
+CREATE TABLE programs (
+    id serial PRIMARY KEY,
+    name varchar(255) NOT NULL,
+    price varchar(20) NOT NULL,
+    domain varchar(50) NOT NULL,
+    programtype varchar(255) NOT NULL,
+    description varchar(255) NOT NULL,
+    imageurl varchar(255) NOT NULL,
+    universityname varchar(100) NOT NULL,
+    facultyprofileurl varchar(255) NOT NULL,
+    learninghours varchar(10) NOT NULL,
+    certificatediploma varchar(50) NOT NULL,
+    eligibilitycriteria varchar(20) NOT NULL,
+    placementassurance boolean NOT NULL,
+    registrations varchar(255) NOT NULL,
+    date varchar(255) NOT NULL
 );
 
-CREATE TABLE Programs (
-    id SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    Price DECIMAL(10, 2) NOT NULL,
-    Domain VARCHAR(50),
-    ProgramType VARCHAR(50),
-    Registrations VARCHAR(10) CHECK (Registrations IN ('open', 'closed')),
-    Description TEXT,
-    PlacementAssurance VARCHAR(3) CHECK (PlacementAssurance IN ('Yes', 'No')),
-    ImageUrl VARCHAR(255),
-    UniversityName VARCHAR(100),
-    FacultyProfileUrl VARCHAR(255),
-    LearningHours INT,
-    Duration VARCHAR(50),
-    CertificateDiploma VARCHAR(20),
-    EligibilityCriteria TEXT
+CREATE TABLE users2 (
+    id serial PRIMARY KEY,
+    name varchar(255) NOT NULL,
+    mailid varchar(255) NOT NULL,
+    password varchar(255) NOT NULL,
+    secret varchar(255) NOT NULL
 );
 
-
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    MailId VARCHAR(255) NOT NULL,
-    Password VARCHAR(255) NOT NULL
-);

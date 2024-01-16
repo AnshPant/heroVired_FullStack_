@@ -6,7 +6,7 @@ const pool = new Pool({
   password: process.env.PSQL_PASS ,
   host: "localhost",
   port: 5432,
-  database: "mashle"
+  database: "mashle2"
 });
 
 module.exports = pool;
