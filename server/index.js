@@ -4,6 +4,7 @@ require('dotenv').config();
 //import modules
 const express = require("express");
 const app = express();
+// const {Sequelize} = require("sequelize");
 const cors = require("cors");
 const pool = require("./db");
 const speakeasy = require('speakeasy');
@@ -11,7 +12,13 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const path = require("path");
 __dirname = path.resolve();
-console.log(__dirname);
+// console.log(__dirname);
+// const sequelize = new Sequelize(process.env.DB_URL,{                                                                                            
+//   dialect : "sqlite",
+//   storage: "./database.sqlite",
+//   logging: false,
+// });
+// sequelize.sync().then(()=>{console.log("suceess connection")}).catch((err)=>{console.log(err)});
 //enable cross origin resource sharing
 app.use(cors());
 
