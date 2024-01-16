@@ -11,7 +11,7 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const path = require("path");
 __dirname = path.resolve();
-
+console.log(__dirname);
 //enable cross origin resource sharing
 app.use(cors());
 
@@ -287,7 +287,9 @@ app.post("/login2", async (req, res) => {
 });
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "/client/build")));
+  app.use(express.static(path.join(__dirname, "../client/build")));
+  // path.join(__dirname, "../client/build/index.html")
+
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
   });
